@@ -1,4 +1,4 @@
-Step 1 Update or install python3.7
+Step 1 Update or install python3.7 ( no need for this step if you have python3.6 installed )
 - to update follow this link -> https://www.itsupportwale.com/blog/how-to-upgrade-to-python-3-7-on-ubuntu-18-10/
 - to install follow this link -> https://phoenixnap.com/kb/how-to-install-python-3-ubuntu
 
@@ -7,7 +7,7 @@ Step 2 Install django inside virtual env and also to install virtual env
 - NOTE: Install django==2.2
 
 Step 3 Install djangosaml2idp
-- sudo apt-get install build-esssential python3.6-dev
+- sudo apt-get install build-esssential python3.7-dev(python3.6-dev if you have python3.6)
 - pip3 install cryptography
 - pip3 install djangosaml2idp
 - pip3 install pysaml2
