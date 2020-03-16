@@ -3,7 +3,7 @@ Step 1 Update or install python3.7 ( no need for this step if you have python3.6
 - to install follow this link -> https://phoenixnap.com/kb/how-to-install-python-3-ubuntu
 
 Step 2 Install django inside virtual env and also to install virtual env 
-- go to this link -> https://hostadvice.com/how-to/how-to-install-django-on-ubuntu-16/
+- go to this link and install using pip -> https://hostadvice.com/how-to/how-to-install-django-on-ubuntu-16/
 - NOTE: Install django==2.2
 
 Step 3 Install djangosaml2idp
