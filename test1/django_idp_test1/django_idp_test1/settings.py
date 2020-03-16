@@ -11,14 +11,17 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-# import saml2
-# from saml2.saml import NAMEID_FORMAT_EMAILADDRESS, NAMEID_FORMAT_UNSPECIFIED
-# from saml2.sigver import get_xmlsec_binary
+import saml2
+from saml2.saml import NAMEID_FORMAT_EMAILADDRESS, NAMEID_FORMAT_UNSPECIFIED
+from saml2.sigver import get_xmlsec_binary
 
-# LOGIN_URL = '/login/'
-# BASE_URL = 'http://localhost:9000/idp'
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LOGIN_URL = '/login/'
+LOGOUT_URL = '/logout/'
+BASE_URL = 'http://localhost:9000/idp'
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+TEMPLATES_DIR = os.path.join(BASE_DIR,'templates')
 
 
 # Quick-start development settings - unsuitable for production
@@ -30,40 +33,40 @@ SECRET_KEY = 'o7!)qc2$szk3l$gr7t0o@s@lat*ojvu%7reu+12re$5+&8_)jl'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# SAML_IDP_CONFIG = {
-#     'debug' : DEBUG,
-#     'xmlsec_binary': get_xmlsec_binary(['/opt/local/bin', '/usr/bin/xmlsec1']),
-#     'entityid': '%s/metadata' % BASE_URL,
-#     'description': 'Example IdP setup',
+SAML_IDP_CONFIG = {
+    'debug' : DEBUG,
+    'xmlsec_binary': get_xmlsec_binary(['/opt/local/bin', '/usr/bin/xmlsec1']),
+    'entityid': '%s/metadata' % BASE_URL,
+    'description': 'Example IdP setup',
 
-#     'service': {
-#         'idp': {
-#             'name': 'Django localhost IdP',
-#             'endpoints': {
-#                 'single_sign_on_service': [
-#                     ('%s/sso/post' % BASE_URL, saml2.BINDING_HTTP_POST),
-#                     ('%s/sso/redirect' % BASE_URL, saml2.BINDING_HTTP_REDIRECT),
-#                 ],
-#             },
-#             'name_id_format': [NAMEID_FORMAT_EMAILADDRESS, NAMEID_FORMAT_UNSPECIFIED],
-#             'sign_response': True,
-#             'sign_assertion': True,
-#         },
-#     },
+    'service': {
+        'idp': {
+            'name': 'Django localhost IdP',
+            'endpoints': {
+                'single_sign_on_service': [
+                    ('%s/sso/post' % BASE_URL, saml2.BINDING_HTTP_POST),
+                    ('%s/sso/redirect' % BASE_URL, saml2.BINDING_HTTP_REDIRECT),
+                ],
+            },
+            'name_id_format': [NAMEID_FORMAT_EMAILADDRESS, NAMEID_FORMAT_UNSPECIFIED],
+            'sign_response': True,
+            'sign_assertion': True,
+        },
+    },
 
-#     'metadata': {
-#         'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'idp'), 'saml2_config'), 'sp_metadata.xml')],
-#     },
-#     # Signing
-#     'key_file': BASE_DIR + '/certificates/private.key',
-#     'cert_file': BASE_DIR + '/certificates/public.cert',
-#     # Encryption
-#     'encryption_keypairs': [{
-#         'key_file': BASE_DIR + '/certificates/private.key',
-#         'cert_file': BASE_DIR + '/certificates/public.cert',
-#     }],
-#     'valid_for': 365 * 24,
-# }
+    'metadata': {
+        'local': [os.path.join(os.path.join(os.path.join(BASE_DIR, 'idp'), 'saml2_config'), 'sp_metadata.xml')],
+    },
+    # Signing
+    'key_file': BASE_DIR + '/certificates/private.key',
+    'cert_file': BASE_DIR + '/certificates/public.cert',
+    # Encryption
+    'encryption_keypairs': [{
+        'key_file': BASE_DIR + '/certificates/private.key',
+        'cert_file': BASE_DIR + '/certificates/public.cert',
+    }],
+    'valid_for': 365 * 24,
+}
 
 # SAML_IDP_SPCONFIG = {
 #     'http://localhost:8000/saml2/metadata/': {
@@ -108,7 +111,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'djangosaml2idp_app',
-    # 'djangosaml2idp',
+    'djangosaml2idp',
 ]
 
 MIDDLEWARE = [
@@ -126,7 +129,9 @@ ROOT_URLCONF = 'django_idp_test1.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            TEMPLATES_DIR
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

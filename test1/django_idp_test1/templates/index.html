@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>IDP</title>
+</head>
+
+<body>
+    <p>-- @ Identity Provider --</p>
+    {% if request.user.is_authenticated %}
+        <p> {{authenticated}} LOGGED IN - <a href={{ logout_url }}>LOGOUT</a></p>
+
+    {% else %}
+        <p>LOGGED OUT - <a href={{ login_url }}>LOGIN</a></p>
+    {% endif %}
+
+</body>
+
+</html>
