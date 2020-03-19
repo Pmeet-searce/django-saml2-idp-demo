@@ -22,6 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('idp/',include('djangosaml2idp_app.urls')),
     path('',views.Index.as_view(),name="HomePage"),
-    path('login/',LoginView.as_view(template_name='login.html'),name='login'),
+    path('login/',LoginView.as_view(template_name='idp/login.html'),name='login'),
     path('login/',LogoutView.as_view(),name='logout'),
 ]
