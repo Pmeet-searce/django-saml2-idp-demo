@@ -60,7 +60,7 @@ def sso_entry(request: HttpRequest, *args, **kwargs) -> HttpResponse:
         pass
     return HttpResponseRedirect(reverse('djangosaml2idp_app:saml_login_process'))
 
-
+ 
 # def check_access()
 
 def get_sp_config(sp_entity_id: str) -> ServiceProvider:
@@ -116,7 +116,7 @@ class IdPHandlerViewMixin:
     
     def render_login_html_to_string(self, context=None, request=None, using=None):
         
-        default_login_template_name = '../templates/login.html'
+        default_login_template_name = '../templates/djangosaml2idp_app/login.html'
         custom_login_template_name = getattr(self, 'login_html_template', None)
         if custom_login_template_name:
             try:
