@@ -1,27 +1,21 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from saml2 import xmldsig
-from .utils import (extract_validuntil_from_metadata, fetch_metadata, validate_metadata)
-from .idp import IDP
-from .processors import validate_processor_path,instantiate_processor
 from django.conf import settings
 from django.utils.functional import cached_property
 from django.utils.timezone import now
-from typing import Dict
+from django.utils.safestring import mark_safe
 
+from saml2 import xmldsig
+
+from .utils import (extract_validuntil_from_metadata, fetch_metadata, validate_metadata)
+from .idp import IDP
+
+from typing import Dict
 import datetime
 import pytz
 import json
 import os
 
-# Create your models here.
-# class User(models.Model):
-    
-#     username= models.CharField(max_length=250)
-#     password=models.CharField(max_length=20)
-    
-#     def __str__(self):
-#         return self.username
 
 User = get_user_model()
 
@@ -36,7 +30,7 @@ default_attribute_mapping = {
 class ServiceProvider(models.Model):
     dt_created = models.DateTimeField(auto_now_add=True)
     dt_updated = models.DateTimeField(auto_now=True,null=True,blank=True)
-    
+    objects = models.Manager()
     #indentification of SP
     entity_id = models.CharField(max_length=256,unique=True)
     description = models.TextField(blank=True)
@@ -69,10 +63,12 @@ class ServiceProvider(models.Model):
     _encrypt_saml_responses = models.BooleanField(null=True)
     
     class Meta:
+        verbose_name = "Service Provider"
+        verbose_name_plural = "Service Providers"
         indexes = [
             models.Index(fields=['entity_id', ]),
         ]
-        
+
     def __str__(self):
         return self.entity_id    
     
@@ -89,14 +85,14 @@ class ServiceProvider(models.Model):
                     self.local_metadata = validate_metadata(fetch_metadata(self.remote_metadata_url))
                 except:
                     pass
-            elif self.metadata_expiration_dt and now( > self.metadata_expiration_dt):
+            elif self.metadata_expiration_dt and now() > self.metadata_expiration_dt:
                 pass
             self.metadata_expiration_dt=extract_validuntil_from_metadata(self.local_metadata)
             return True
         return False
             
     @property
-    def attribute_mapping(self) -> Dict(str,str):
+    def attribute_mapping(self) -> Dict[str, str]:
         if not self._attribute_mapping:
             return default_attribute_mapping
         return json.loads(self._attribute_mapping)
@@ -111,6 +107,7 @@ class ServiceProvider(models.Model):
     
     @cached_property
     def processor(self) -> 'BaseProcessor':
+        from .processors import validate_processor_path, instantiate_processor
         processor_cls = validate_processor_path(self._processor)
         return instantiate_processor(processor_cls, self.entity_id)
     
@@ -127,21 +124,21 @@ class ServiceProvider(models.Model):
                 os.mkdir(path)
             except:
                 pass
-        filename = '{}/{}.xml'.format(path,self.id)
+        filename = '{}/{}.xml'.format(path, self.id)
         
         if not os.path.exists(filename) or refreshed_metadata or self.dt_updated.replace(tzinfo=pytz.utc) > datetime.datetime.fromtimestamp(os.path.getmtime(filename)).replace(tzinfo=pytz.utc):
             try:
-                with.open(filename, 'w') as f:
+                with open(filename, 'w') as f:
                     f.write(self.local_metadata)
             except:
-                raise
+                pass
             return filename
         
         
     @property
     def sign_response(self) -> bool:
         if self._sign_assertion is None:
-            return getattr(IDP.load().config,"sign_response",False)
+            return getattr(IDP.load().config, "sign_response", False)
         return self._sign_response
     
     @property
@@ -179,8 +176,9 @@ class ServiceProvider(models.Model):
                 'sign_assertion':self.sign_assertion,
                 'encrypt_saml_responses':self.encrypt_saml_responses,
                 'signing_algorithm': self.signing_algorithm,
-                'digest_algorithm': self.diIN
-
+                'digest_algorithm': self.digest_algorithm
+            }
+            config_as_str = json.dumps(d, indent=4)
         except:
             pass
         

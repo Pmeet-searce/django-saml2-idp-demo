@@ -1,17 +1,20 @@
 import copy
 
+from django.apps import apps
 from django.conf import settings
 from django.utils.translation import gettext as _
 from saml2.metadata import entity_descriptor
 from saml2.config import IdPConfig
 from saml2.server import Server
-from .models import ServiceProvider
+
 
 class IDP:
     _server_instance: Server = None
     
     @classmethod
     def construct_metadata(cls) -> dict:
+        from .models import ServiceProvider
+
         idp_config = copy.deepcopy(settings.SAML_IDP_CONFIG)
         if idp_config:
             idp_config['metadata'] = {
@@ -27,7 +30,7 @@ class IDP:
             try:
                 conf.load(md)
                 cls._server_instance = Server(config=conf)
-            except :
+            except:
                 pass
         return cls._server_instance
     

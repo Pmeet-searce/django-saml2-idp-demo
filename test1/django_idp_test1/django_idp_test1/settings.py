@@ -68,23 +68,23 @@ SAML_IDP_CONFIG = {
     'valid_for': 365 * 24,
 }
 
-# SAML_IDP_SPCONFIG = {
-#     'http://localhost:8000/saml2/metadata/': {
-#         'processor': 'djangosaml2idp.processors.BaseProcessor',
-#         'nameid_field': 'staffID',
-#         'sign_response': False,
-#         'sign_assertion': False,
-#         'attribute_mapping': {
-#             # DJANGO: SAML
-#             'email': 'email',
-#             'first_name': 'first_name',
-#             'last_name': 'last_name',
-#             'is_staff': 'is_staff',
-#             'is_superuser':  'is_superuser',
-#             'callable_to_get_id': 'calculate_id',  # assuming <user_instance>.calculate_id() is a method
-#         }
-#     }
-# }
+SAML_IDP_SPCONFIG = {
+    'http://localhost:8000/saml2/metadata/': {
+        'processor': 'djangosaml2idp.processors.BaseProcessor',
+        'nameid_field': 'staffID',
+        'sign_response': False,
+        'sign_assertion': False,
+        'attribute_mapping': {
+            # DJANGO: SAML
+            'email': 'email',
+            'first_name': 'first_name',
+            'last_name': 'last_name',
+            'is_staff': 'is_staff',
+            'is_superuser':  'is_superuser',
+            'callable_to_get_id': 'calculate_id',  # assuming <user_instance>.calculate_id() is a method
+        }
+    }
+}
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 
@@ -111,7 +111,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'djangosaml2idp_app',
-    'djangosaml2idp',
+
+    
 ]
 
 MIDDLEWARE = [

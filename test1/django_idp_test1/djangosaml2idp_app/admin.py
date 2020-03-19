@@ -16,7 +16,7 @@ class ServiceProviderAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             'Identification', {
-                'fields': ('entity_id', 'pretty_name', 'description')
+                'fields': ('entity_id', 'description')
             }
         ),
         (

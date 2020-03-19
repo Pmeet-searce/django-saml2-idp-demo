@@ -5,18 +5,14 @@ from django.utils.translation import gettext as _
 from django.utils.module_loading import import_string
 
 from saml2.saml import (NAMEID_FORMAT_UNSPECIFIED,NAMEID_FORMAT_TRANSIENT,NAMEID_FORMAT_PERSISTENT,NAMEID_FORMAT_EMAILADDRESS,NAMEID_FORMAT_X509SUBJECTNAME,NAMEID_FORMAT_WINDOWSDOMAINQUALIFIEDNAME,NAMEID_FORMAT_KERBEROS,NAMEID_FORMAT_ENTITY,NAMEID_FORMAT_ENCRYPTED)
-
-
 from .models import ServiceProvider
 
-
 import hashlib
-
 
 User = get_user_model()
 
 class NameIdBuilder:
-    
+
     format_mappings = {
         NAMEID_FORMAT_UNSPECIFIED: 'get_nameid_unspecified',
         NAMEID_FORMAT_TRANSIENT: 'get_nameid_transient',
@@ -66,7 +62,7 @@ class NameIdBuilder:
         return name_id
     
 class BaseProcessor:
-    
+
     def __init__(self, entity_id: str):
         self._entity_id = entity_id
         
@@ -76,13 +72,15 @@ class BaseProcessor:
     # def enable_multifactor(self, user) -> bool:
     #     return False
     
-    def get_user_id(self, user, name_id_format: str, service_provider: ServiceProvider, idp_config) -> bool:
+
     
+    def get_user_id(self, user, name_id_format: str, service_provider: ServiceProvider, idp_config) -> bool:
+        
         user_field_str = service_provider.nameid_field
         user_field = getattr(user, user_field_str)
         
         if callable(user_field):
-            user_id = str(userfield())
+            user_id = str(user_field)
         else:
             user_id = str(user_field)
             

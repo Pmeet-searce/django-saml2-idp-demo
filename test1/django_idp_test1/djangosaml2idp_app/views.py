@@ -10,7 +10,7 @@ from django.core.exceptions import (ImproperlyConfigured, ObjectDoesNotExist, Pe
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.translation import gettext as _
-
+from django.utils.decorators import method_decorator
 
 from saml2 import BINDING_HTTP_POST,BINDING_HTTP_REDIRECT
 from saml2.authn_context import PASSWORD, AuthnBroker, authn_context_class_ref
@@ -18,9 +18,9 @@ from saml2.saml import NAMEID_FORMAT_UNSPECIFIED
 from saml2.ident import NameID
 
 
-from .models import ServiceProvider 
+from .models import ServiceProvider as ServiceProvider,User
 from .idp import IDP
-from .processor import BaseProcessor
+from .processors import BaseProcessor
 from .utils import verify_request_signature
 
 
@@ -29,7 +29,7 @@ import base64
 
 
 
-User = get_user_model()
+# User = get_user_model()
 
 
 def store_params_in_session(request: HttpRequest) -> None:
@@ -143,15 +143,15 @@ class IdPHandlerViewMixin:
             ido_server = IDP.load()
             http_args = ido_server.apply_binding(
                 binding = binding,
-                msg_str = = authn_resp,
+                msg_str = authn_resp,
                 destination = destination,
                 relay_state = relay_state,
                 response = True
             )
-        html_response = {
-            "data": http_args['headers'][0][1],
-            "type": "REDIRECT",
-        }
+            html_response = {
+                "data": http_args['headers'][0][1],
+                "type": "REDIRECT",
+            }
         return html_response
     
     def render_response(self, request: HttpRequest, html_response, processor: BaseProcessor = None) -> HttpResponse:
@@ -162,11 +162,7 @@ class IdPHandlerViewMixin:
                 return HttpResponseRedirect(html_response['data'])
         request.session['saml_data'] = html_response
 
-    if html_response['type'] == 'POST':
-        return HttpResponse(html_response['data'])
-    else:
-        return HttpResponseRedirect(html_response['data'])
-
+    
 @method_decorator(never_cache,name = 'dispatch')   
 class LoginProcessView(LoginRequiredMixin, IdPHandlerViewMixin, View):
     
@@ -193,14 +189,14 @@ class LoginProcessView(LoginRequiredMixin, IdPHandlerViewMixin, View):
             except:
                 pass
             
-            authn_resp = =build_authn_response(request.user, get_authn(), resp_args, service_provider)
+            authn_resp = build_authn_response(request.user, get_authn(), resp_args, service_provider)
             
         except:
             pass
         
         html_response = self.create_html_response(
             request,
-            binding resp_args['binding'],
+            binding = resp_args['binding'],
             authn_resp = authn_resp,
             destination = resp_args['destination'],
             relay_state = request.session['RelayState']
